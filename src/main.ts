@@ -5,8 +5,8 @@ import { logger } from './middleware/log-events.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.use(logger);
   app.use(cookieParser());
+  app.use(logger);
   await app.listen(3500);
 }
 bootstrap();

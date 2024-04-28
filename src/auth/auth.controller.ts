@@ -53,14 +53,10 @@ export class AuthController {
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const cookies = request.cookies;
-
     const { accessToken, refreshToken } = await this.authService.signUp(
       signUpDto,
       request.ip || '',
       request['user-agent'] || '',
-      cookies,
-      response,
     );
 
     response.cookie('jwt', refreshToken, {
@@ -107,7 +103,6 @@ export class AuthController {
     return { accessToken };
   }
 
-  // @UseGuards(AuthGuard)
   @Get('profile')
   async getProfile(@Req() request: Request) {
     return await this.authService.getProfile(request.userId);

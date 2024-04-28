@@ -98,37 +98,11 @@ export class AuthService {
     signUpDto: SignUpDTO,
     ip: string,
     userAgent: string,
-    cookies: Record<string, any>,
-    response: Response,
   ): Promise<TokensType> {
     const user = await this.usersService.create(signUpDto);
 
     const { accessToken, refreshToken: newRefreshToken } =
       await this.createAuthTokens(signUpDto.email, user.id);
-
-    if (cookies?.jwt) {
-      /**
-       * Scenario added here
-       * 1) User logs in but never uses RT and does not logout
-       * 2) RT is stolen
-       * 3) If 1 & 2, reuse detection is neede to clear all RTs when user logs in
-       */
-      const refreshToken = cookies.jwt;
-      const foundToken = await this.refreshTokenService.findOne(refreshToken);
-
-      // Detected refresh token reuse!
-      if (!foundToken) {
-        // clear out ALL previous refresh tokens
-        response.clearCookie('jwt', {
-          httpOnly: true,
-          sameSite: 'none',
-          maxAge: 24 * 60 * 60 * 1000,
-        });
-        await this.refreshTokenService.removeByUserId(user.id);
-      } else {
-        await this.refreshTokenService.removeByToken(refreshToken);
-      }
-    }
 
     this.refreshTokenService.create({
       ip,
