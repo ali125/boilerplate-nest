@@ -14,7 +14,9 @@ export const logEvents = async (message: string, logName: string) => {
   try {
     if (!fs.existsSync(DIR)) {
       await fsPromises.mkdir(DIR);
+      console.log('CREATE DIRECTORY');
     }
+    console.log('ATTACH FILE');
     await fsPromises.appendFile(path.join(DIR, logName), logItem);
   } catch (err) {
     console.log(err);
@@ -22,6 +24,6 @@ export const logEvents = async (message: string, logName: string) => {
 };
 
 export const logger = (req: Request, res: Response, next: NextFunction) => {
-  logEvents(`${req.method}\t${req.originalUrl}\t${req.url}`, 'reqLog.txt');
+  logEvents(`${req.method} \t${req.originalUrl} \t${req.url}`, 'reqLog.txt');
   next();
 };
