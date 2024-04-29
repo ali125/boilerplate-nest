@@ -5,15 +5,19 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './entities/post.entity';
+import { DataAccess } from '@/model/data-access/data-access.abstract';
+import { DataAccessListDTO } from '@/model/data-access/data-access.dto';
 // import { Roles } from '@/roles/roles.decorator';
 // import { Role } from '@/roles/roles.enum';
 
 @Injectable()
-export class PostsService {
+export class PostsService extends DataAccess<Post> {
   constructor(
     @InjectRepository(Post)
     private postsRepository: Repository<Post>,
-  ) {}
+  ) {
+    super(postsRepository);
+  }
 
   private async generateSlug(slug?: string, title?: string) {
     // Generate slug based on title
@@ -44,23 +48,30 @@ export class PostsService {
   }
 
   // @Roles(Role.Admin)
-  async create(createPostDto: CreatePostDto): Promise<Post | null> {
+  async create(
+    userId: string,
+    createPostDto: CreatePostDto,
+  ): Promise<Post | null> {
     const { title, slug, description, status } = createPostDto;
     const post = new Post();
     post.title = title;
     post.slug = await this.generateSlug(slug, title);
     post.description = description;
     post.status = status;
+    post.userId = userId;
 
     return await this.postsRepository.manager.save(post);
   }
 
-  async findAll(): Promise<Post[]> {
-    return await this.postsRepository.find();
+  async findAll(dataAccessListDto: DataAccessListDTO) {
+    return this.baseFindAll(dataAccessListDto, { relations: ['user'] });
   }
 
   async findOne(id: string): Promise<Post | null> {
-    const post = await this.postsRepository.findOneBy({ id });
+    const post = await this.postsRepository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
     if (!post) {
       throw new NotFoundException('Post Not Found!');
     }

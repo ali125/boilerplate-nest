@@ -7,23 +7,32 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  ValidationPipe,
+  Query,
+  Req,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { DataAccessListDTO } from '@/model/data-access/data-access.dto';
+import { Request } from 'express';
 
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post()
-  create(@Body() createPostDto: CreatePostDto) {
-    return this.postsService.create(createPostDto);
+  create(@Body() createPostDto: CreatePostDto, @Req() request: Request) {
+    const userId = request.userId;
+    return this.postsService.create(userId, createPostDto);
   }
 
   @Get()
-  findAll() {
-    return this.postsService.findAll();
+  findAll(
+    @Query(new ValidationPipe({ transform: true }))
+    dataAccessListDto: DataAccessListDTO,
+  ) {
+    return this.postsService.findAll(dataAccessListDto);
   }
 
   @Get(':id')

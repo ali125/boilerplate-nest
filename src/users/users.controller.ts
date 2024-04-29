@@ -8,17 +8,23 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { UsersService } from './users.service';
+import { DataAccessListDTO } from '@/model/data-access/data-access.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  findAll(
+    @Query(new ValidationPipe({ transform: true }))
+    dataAccessListDto: DataAccessListDTO,
+  ) {
+    return this.usersService.findAll(dataAccessListDto);
   }
 
   @Get(':id')

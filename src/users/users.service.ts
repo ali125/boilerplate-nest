@@ -10,13 +10,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UserStatus } from './interfaces/user-status.enum';
+import { DataAccess } from '@/model/data-access/data-access.abstract';
+import { DataAccessListDTO } from '@/model/data-access/data-access.dto';
 
 @Injectable()
-export class UsersService {
+export class UsersService extends DataAccess<User> {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-  ) {}
+  ) {
+    super(usersRepository);
+  }
 
   async create(createUserDto: CreateUserDTO): Promise<User | null> {
     const user = new User();
@@ -37,8 +41,8 @@ export class UsersService {
     return await this.usersRepository.manager.save(user);
   }
 
-  async findAll(): Promise<User[]> {
-    return await this.usersRepository.find();
+  async findAll(dataAccessListDto: DataAccessListDTO) {
+    return this.baseFindAll(dataAccessListDto);
   }
 
   async findOne(id: string): Promise<User | null> {
