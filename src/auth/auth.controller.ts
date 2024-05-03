@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Ip,
   Post,
   Req,
   Res,
@@ -51,11 +52,12 @@ export class AuthController {
   async signUp(
     @Body() signUpDto: SignUpDTO,
     @Req() request: Request,
+    @Ip() ip: string,
     @Res({ passthrough: true }) response: Response,
   ) {
     const { accessToken, refreshToken } = await this.authService.signUp(
       signUpDto,
-      request.ip || '',
+      ip,
       request['user-agent'] || '',
     );
 
