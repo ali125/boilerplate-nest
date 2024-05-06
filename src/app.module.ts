@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
@@ -8,10 +8,12 @@ import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
 import { RefreshTokensModule } from './refresh-tokens/refresh-tokens.module';
 import { AuthModule } from './auth/auth.module';
-import { APP_FILTER, APP_GUARD, APP_PIPE } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { HttpExceptionFilter } from './exceptions/all-exception.filter';
 import { ValidationPipe } from './exceptions/validation.pipe';
 import { AuthGuard } from './auth/auth.guard';
+import { CategoriesModule } from './categories/categories.module';
+// import { TransformInterceptor } from './exceptions/transform.interceptor';
 
 @Module({
   imports: [
@@ -21,6 +23,7 @@ import { AuthGuard } from './auth/auth.guard';
     PostsModule,
     RefreshTokensModule,
     AuthModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [
@@ -36,6 +39,10 @@ import { AuthGuard } from './auth/auth.guard';
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ClassSerializerInterceptor,
     },
     // {
     //   provide: APP_INTERCEPTOR,

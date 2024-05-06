@@ -5,10 +5,11 @@ import {
   FindOptionsWhere,
   Repository,
 } from 'typeorm';
+import { isUUID } from 'class-validator';
+import slugify from 'slugify';
 import { DataAccessList } from './data-access.interface';
 import { DataAccessListDTO } from './data-access.dto';
 import { filterControlOperator } from '@/helper/filter';
-import { isUUID } from 'class-validator';
 
 export abstract class DataAccess<T> {
   constructor(private repository: Repository<T>) {}
@@ -22,10 +23,12 @@ export abstract class DataAccess<T> {
 
     const offset = (page - 1) * perPage;
 
-    let order: FindOptionsOrder<T>;
+    let order: FindOptionsOrder<T> = {
+      createdAt: 'DESC',
+    } as any;
     if (sortBy && sortOrder) {
       order = {
-        [sortBy as string]: sortOrder === 'desc' ? 'DESC' : 'ASC',
+        [sortBy as string]: sortOrder === 'asc' ? 'ASC' : 'DESC',
       } as any;
     }
 
@@ -88,5 +91,33 @@ export abstract class DataAccess<T> {
       total,
       data,
     };
+  }
+
+  protected async generateSlug(slug?: string, title?: string) {
+    // Generate slug based on title
+    const baseSlug = slugify(slug || title, { lower: true });
+
+    // Check if slug already exists
+    let slugExists = true;
+    let counter = 1;
+    let newSlug = baseSlug;
+
+    while (slugExists) {
+      // Check if slug already exists in the database
+      // (You need to implement a function to check if a slug exists in your repository)
+      const existingPost = await this.repository.findOneBy({
+        slug: newSlug,
+      } as FindOptionsWhere<any>);
+      if (!existingPost) {
+        // If the slug does not exist, set it to the newSlug
+        slugExists = false;
+      } else {
+        // If the slug exists, generate a new slug by appending a counter
+        newSlug = `${baseSlug}-${counter}`;
+        counter++;
+      }
+    }
+
+    return newSlug;
   }
 }

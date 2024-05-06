@@ -12,8 +12,8 @@ import { RefreshTokensModule } from '@/refresh-tokens/refresh-tokens.module';
     JwtModule.register({
       global: true,
       secret: process.env.ACCESS_TOKEN_SECRET,
-      signOptions: { expiresIn: '60s' },
-      // signOptions: { expiresIn: '1hr' },
+      // signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '1hr' },
     }),
   ],
   controllers: [AuthController],

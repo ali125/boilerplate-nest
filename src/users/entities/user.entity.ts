@@ -10,6 +10,8 @@ import {
 import { UserStatus } from '../interfaces/user-status.enum';
 import { RefreshToken } from '../../refresh-tokens/entities/refresh-token.entity';
 import { Post } from '../../posts/entities/post.entity';
+import { Category } from '../../categories/entities/category.entity';
+import { Expose } from 'class-transformer';
 
 @Entity('users')
 export class User {
@@ -47,6 +49,9 @@ export class User {
   @OneToMany(() => Post, (post) => post.user)
   posts: Post[];
 
+  @OneToMany(() => Category, (category) => category.user)
+  categories: Category[];
+
   @Column({
     type: 'timestamp',
     nullable: true,
@@ -63,6 +68,7 @@ export class User {
   deletedAt: Date;
 
   // Define a getter method for the virtual column
+  @Expose()
   get fullName(): string {
     return `${this.firstName} ${this.lastName}`;
   }
