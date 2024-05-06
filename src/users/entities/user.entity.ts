@@ -7,11 +7,12 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Expose } from 'class-transformer';
 import { UserStatus } from '../interfaces/user-status.enum';
 import { RefreshToken } from '../../refresh-tokens/entities/refresh-token.entity';
 import { Post } from '../../posts/entities/post.entity';
 import { Category } from '../../categories/entities/category.entity';
-import { Expose } from 'class-transformer';
+import { Tag } from '../../tags/entities/tag.entity';
 
 @Entity('users')
 export class User {
@@ -51,6 +52,9 @@ export class User {
 
   @OneToMany(() => Category, (category) => category.user)
   categories: Category[];
+
+  @OneToMany(() => Tag, (tag) => tag.user)
+  tags: Tag[];
 
   @Column({
     type: 'timestamp',

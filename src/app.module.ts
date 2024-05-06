@@ -14,6 +14,7 @@ import { ValidationPipe } from './exceptions/validation.pipe';
 import { AuthGuard } from './auth/auth.guard';
 import { CategoriesModule } from './categories/categories.module';
 // import { TransformInterceptor } from './exceptions/transform.interceptor';
+import { TagsModule } from './tags/tags.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { CategoriesModule } from './categories/categories.module';
     RefreshTokensModule,
     AuthModule,
     CategoriesModule,
+    TagsModule,
   ],
   controllers: [AppController],
   providers: [

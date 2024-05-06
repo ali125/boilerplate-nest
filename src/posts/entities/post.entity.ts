@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -10,6 +11,7 @@ import {
 import { PostStatus } from '../interface/post-status.enum';
 import { User } from '../../users/entities/user.entity';
 import { Category } from '../../categories/entities/category.entity';
+import { Tag } from '../../tags/entities/tag.entity';
 
 @Entity('posts')
 export class Post {
@@ -38,6 +40,9 @@ export class Post {
 
   @ManyToOne(() => Category, (category) => category.posts)
   category: Category;
+
+  @ManyToMany(() => Tag, (tag) => tag.posts)
+  tags: Tag[];
 
   @Column({ type: 'enum', enum: PostStatus, default: PostStatus.DRAFT }) // default value is Draft
   status: string;
