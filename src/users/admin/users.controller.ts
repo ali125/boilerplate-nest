@@ -12,9 +12,10 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { DataAccessListDTO } from '@/model/data-access/data-access.dto';
+import { DataAccessQueryDTO } from '@/model/data-access/data-access.dto';
 import { CreateUserDTO } from '../dto/create-user.dto';
 import { UpdateUserDTO } from '../dto/update-user.dto';
+import { convertDataAccessQueryToDto } from '@/helper/string';
 
 @Controller('admin/users')
 export class UsersController {
@@ -22,9 +23,11 @@ export class UsersController {
   @Get()
   findAll(
     @Query(new ValidationPipe({ transform: true }))
-    dataAccessListDto: DataAccessListDTO,
+    dataAccessListDto: DataAccessQueryDTO,
   ) {
-    return this.usersService.findAll(dataAccessListDto);
+    return this.usersService.findAll(
+      convertDataAccessQueryToDto(dataAccessListDto),
+    );
   }
 
   @Get(':id')
