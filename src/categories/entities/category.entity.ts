@@ -1,22 +1,11 @@
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Post } from '../../posts/entities/post.entity';
 import { CategoryStatus } from '../interface/category-status.enum';
+import { BaseEntityDB } from '../../model/database/base-entity.abstract';
 
 @Entity('categories')
-export class Category {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class Category extends BaseEntityDB {
   @Column({ length: 100 })
   title: string;
 
@@ -50,13 +39,4 @@ export class Category {
     default: CategoryStatus.ACTIVE,
   }) // default value is Active
   status: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @DeleteDateColumn({ nullable: true })
-  deletedAt: Date;
 }

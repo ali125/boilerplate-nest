@@ -1,23 +1,12 @@
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  ManyToMany,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToMany, ManyToOne } from 'typeorm';
 import { PostStatus } from '../interface/post-status.enum';
 import { User } from '../../users/entities/user.entity';
 import { Category } from '../../categories/entities/category.entity';
 import { Tag } from '../../tags/entities/tag.entity';
+import { BaseEntityDB } from '../../model/database/base-entity.abstract';
 
 @Entity('posts')
-export class Post {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class Post extends BaseEntityDB {
   @Column({ length: 100 })
   title: string;
 
@@ -58,13 +47,4 @@ export class Post {
     nullable: true,
   })
   blockedAt: Date | null;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @DeleteDateColumn({ nullable: true })
-  deletedAt: Date;
 }

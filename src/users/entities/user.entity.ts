@@ -1,24 +1,14 @@
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { Expose } from 'class-transformer';
 import { UserStatus } from '../interfaces/user-status.enum';
 import { RefreshToken } from '../../refresh-tokens/entities/refresh-token.entity';
 import { Post } from '../../posts/entities/post.entity';
 import { Category } from '../../categories/entities/category.entity';
 import { Tag } from '../../tags/entities/tag.entity';
+import { BaseEntityDB } from '../../model/database/base-entity.abstract';
 
 @Entity('users')
-export class User {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class User extends BaseEntityDB {
   @Column({ length: 100 })
   firstName: string;
 
@@ -61,15 +51,6 @@ export class User {
     nullable: true,
   })
   blockedAt: Date | null;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @DeleteDateColumn({ nullable: true })
-  deletedAt: Date;
 
   // Define a getter method for the virtual column
   @Expose()

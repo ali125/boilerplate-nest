@@ -2,10 +2,10 @@ import { Column, Entity, ManyToMany, ManyToOne } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Post } from '../../posts/entities/post.entity';
 import { TagStatus } from '../interface/tag-status.enum';
-import { BaseEntity } from '../../model/database/base-entity.abstract';
+import { BaseEntityDB } from '../../model/database/base-entity.abstract';
 
 @Entity('tags')
-export class Tag extends BaseEntity {
+export class Tag extends BaseEntityDB {
   @Column({ length: 100 })
   title: string;
 

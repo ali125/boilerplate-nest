@@ -1,19 +1,9 @@
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
+import { BaseEntityDB } from '../../model/database/base-entity.abstract';
 
 @Entity({ name: 'refreshTokens' })
-export class RefreshToken {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class RefreshToken extends BaseEntityDB {
   @Column()
   token: string;
 
@@ -28,13 +18,4 @@ export class RefreshToken {
 
   @ManyToOne(() => User, (user) => user.refreshTokens)
   user: User;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @DeleteDateColumn({ nullable: true })
-  deletedAt: Date;
 }
