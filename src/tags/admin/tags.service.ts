@@ -11,9 +11,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 export class TagsService extends DataAccess<Tag> {
   constructor(
     @InjectRepository(Tag)
-    private categoriesRepository: Repository<Tag>,
+    private tagsRepository: Repository<Tag>,
   ) {
-    super(categoriesRepository);
+    super(tagsRepository);
   }
   async create(
     userId: string,
@@ -27,7 +27,7 @@ export class TagsService extends DataAccess<Tag> {
     tag.status = status;
     tag.userId = userId;
 
-    return await this.categoriesRepository.manager.save(tag);
+    return await this.tagsRepository.manager.save(tag);
   }
 
   async findAll(dataAccessListDto: DataAccessListDTO) {
@@ -37,7 +37,7 @@ export class TagsService extends DataAccess<Tag> {
   }
 
   async findOne(id: string): Promise<Tag | null> {
-    const tag = await this.categoriesRepository.findOne({
+    const tag = await this.tagsRepository.findOne({
       where: { id },
       relations: ['user'],
     });
@@ -50,7 +50,7 @@ export class TagsService extends DataAccess<Tag> {
   async update(id: string, updateTagDto: UpdateTagDto): Promise<Tag | null> {
     const { title, slug, description } = updateTagDto;
 
-    const tag = await this.categoriesRepository.findOneBy({ id });
+    const tag = await this.tagsRepository.findOneBy({ id });
     if (!tag) {
       throw new NotFoundException('Tag Not Found!');
     }
@@ -59,14 +59,14 @@ export class TagsService extends DataAccess<Tag> {
     if (slug) tag.slug = await this.generateSlug(slug);
     if (description) tag.description = description;
 
-    return await this.categoriesRepository.manager.save(tag);
+    return await this.tagsRepository.manager.save(tag);
   }
 
   async remove(id: string): Promise<void> {
-    const Tag = await this.categoriesRepository.findOneBy({ id });
-    if (!Tag) {
+    const tag = await this.tagsRepository.findOneBy({ id });
+    if (!tag) {
       throw new NotFoundException('Tag Not Found!');
     }
-    await this.categoriesRepository.softRemove(Tag);
+    await this.tagsRepository.softRemove(tag);
   }
 }

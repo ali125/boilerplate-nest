@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { Expose } from 'class-transformer';
 import { UserStatus } from '../interfaces/user-status.enum';
 import { RefreshToken } from '../../refresh-tokens/entities/refresh-token.entity';
@@ -6,6 +6,8 @@ import { Post } from '../../posts/entities/post.entity';
 import { Category } from '../../categories/entities/category.entity';
 import { Tag } from '../../tags/entities/tag.entity';
 import { BaseEntityDB } from '../../model/database/base-entity.abstract';
+import { Role } from '../../roles/entities/role.entity';
+import { Permission } from '../../permissions/entities/permission.entity';
 
 @Entity('users')
 export class User extends BaseEntityDB {
@@ -34,11 +36,20 @@ export class User extends BaseEntityDB {
   @Column({ type: 'enum', enum: UserStatus, default: UserStatus.ACTIVE })
   status: string;
 
+  @Column({ nullable: true })
+  roleId: string | null;
+
+  @ManyToOne(() => Role, (role) => role.users)
+  role: Role;
+
   @OneToMany(() => RefreshToken, (token) => token.user)
   refreshTokens: RefreshToken[];
 
   @OneToMany(() => Post, (post) => post.user)
   posts: Post[];
+
+  @OneToMany(() => Permission, (permission) => permission.user)
+  permissions: Permission[];
 
   @OneToMany(() => Category, (category) => category.user)
   categories: Category[];

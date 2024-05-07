@@ -15,6 +15,9 @@ import { AuthGuard } from './auth/auth.guard';
 import { CategoriesModule } from './categories/categories.module';
 // import { TransformInterceptor } from './exceptions/transform.interceptor';
 import { TagsModule } from './tags/tags.module';
+import { CaslModule } from './casl/casl.module';
+import { PermissionsModule } from './permissions/permissions.module';
+import { RolesModule } from './roles/roles.module';
 
 @Module({
   imports: [
@@ -26,6 +29,9 @@ import { TagsModule } from './tags/tags.module';
     AuthModule,
     CategoriesModule,
     TagsModule,
+    CaslModule,
+    PermissionsModule,
+    RolesModule,
   ],
   controllers: [AppController],
   providers: [

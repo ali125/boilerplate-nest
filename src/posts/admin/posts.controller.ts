@@ -8,6 +8,7 @@ import {
   Delete,
   ParseUUIDPipe,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { DataAccessQueryDTO } from '@/model/data-access/data-access.dto';
@@ -15,6 +16,9 @@ import { UserId } from '@/decorators/userId.decorator';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
 import { convertDataAccessQueryToDto } from '@/helper/string';
+import { PoliciesGuard } from '@/casl/policy.guard';
+import { CheckPolicies } from '@/casl/policy.decorator';
+import { ReadArticlePolicyHandler } from '@/casl/policy.interface';
 
 @Controller('admin/posts')
 export class PostsController {
@@ -26,6 +30,8 @@ export class PostsController {
   }
 
   @Get()
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies(new ReadArticlePolicyHandler())
   findAll(
     @Query()
     dataAccessListDto: DataAccessQueryDTO,

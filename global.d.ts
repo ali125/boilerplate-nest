@@ -1,3 +1,5 @@
+import { User } from '@/users/entities/user.entity';
+
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
@@ -11,5 +13,6 @@ declare namespace Express {
   export interface Request {
     userId?: string;
     email?: string;
+    user?: User;
   }
 }

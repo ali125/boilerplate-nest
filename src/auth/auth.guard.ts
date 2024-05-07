@@ -8,11 +8,13 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+import { UsersService } from '@/users/users.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
+    private usersService: UsersService,
     private reflector: Reflector,
   ) {}
 
@@ -41,6 +43,7 @@ export class AuthGuard implements CanActivate {
       // so that we can access it in our route handlers
       request.userId = payload.userId;
       request.email = payload.email;
+      request.user = await this.usersService.findOne(request.userId);
     } catch (e) {
       console.log('catch error', e);
       throw new UnauthorizedException();

@@ -6,12 +6,16 @@ import { DataAccessListDTO } from '@/model/data-access/data-access.dto';
 import { Post } from '../entities/post.entity';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
+import { CaslAbilityFactory } from '@/casl/casl-ability.factory/casl-ability.factory';
+import { UsersService } from '@/users/users.service';
 
 @Injectable()
 export class PostsService extends DataAccess<Post> {
   constructor(
     @InjectRepository(Post)
     private postsRepository: Repository<Post>,
+    private usersService: UsersService,
+    private caslAbilityFactory: CaslAbilityFactory,
   ) {
     super(postsRepository);
   }
@@ -21,6 +25,13 @@ export class PostsService extends DataAccess<Post> {
     userId: string,
     createPostDto: CreatePostDto,
   ): Promise<Post | null> {
+    // const user = await this.usersService.findOne(userId);
+    // const ability = this.caslAbilityFactory.createForUser(user);
+
+    // if (!ability.can(CaslAction.Create, 'all')) {
+    //   throw new ForbiddenException();
+    // }
+
     const { title, slug, description, status } = createPostDto;
     const post = new Post();
     post.title = title;
