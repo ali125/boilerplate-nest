@@ -12,8 +12,8 @@ export class Category extends BaseEntityDB {
   @Column({ length: 100 })
   slug: string;
 
-  @Column('text')
-  description: string;
+  @Column('text', { nullable: true })
+  description: string | null;
 
   @Column()
   userId: string;

@@ -9,12 +9,14 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { UsersService } from '@/users/users.service';
+import { RolesService } from '@/roles/roles.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private usersService: UsersService,
+    private rolesService: RolesService,
     private reflector: Reflector,
   ) {}
 
@@ -41,9 +43,13 @@ export class AuthGuard implements CanActivate {
 
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
+      request.userPermissions = [];
       request.userId = payload.userId;
       request.email = payload.email;
       request.user = await this.usersService.findOne(request.userId);
+      if (request.user.role) {
+        request.userRole = await this.rolesService.findOne(request.user.roleId);
+      }
     } catch (e) {
       console.log('catch error', e);
       throw new UnauthorizedException();

@@ -16,4 +16,8 @@ export class CreateUserDTO {
 
   @IsString()
   password: string;
+
+  @IsString()
+  @IsOptional()
+  roleId?: string;
 }

@@ -9,27 +9,51 @@ import {
 } from '@casl/ability';
 import { Injectable } from '@nestjs/common';
 import { CaslAction } from '../casl.enum';
-import { PostStatus } from '@/posts/interface/post-status.enum';
+import { Role } from '@/roles/entities/role.entity';
+import { Category } from '@/categories/entities/category.entity';
+import { Tag } from '@/tags/entities/tag.entity';
 
-type Subjects = InferSubjects<typeof Post | typeof User> | 'all';
+type Subjects =
+  | InferSubjects<typeof Post | typeof Category | typeof Tag | typeof User>
+  | 'all';
 
 export type AppAbility = Ability<[CaslAction, Subjects]>;
 
 @Injectable()
 export class CaslAbilityFactory {
-  createForUser(user: User) {
-    const { can, cannot, build } = new AbilityBuilder<
-      Ability<[CaslAction, Subjects]>
-    >(Ability as AbilityClass<AppAbility>);
+  createForUser(role: Role | null) {
+    const { can, build } = new AbilityBuilder<Ability<[CaslAction, Subjects]>>(
+      Ability as AbilityClass<AppAbility>,
+    );
 
-    if (user.email === 'ali.mortazavi121@gmail.com') {
+    if (role?.superAdmin) {
       can(CaslAction.Manage, 'all');
     } else {
-      can(CaslAction.Read, 'all');
+      role.permissions.forEach((permission) => {
+        switch (permission.module) {
+          case Post.name:
+            can(permission.action, Post);
+            break;
+          case Category.name:
+            can(permission.action, Category);
+            break;
+          case Tag.name:
+            can(permission.action, Tag);
+            break;
+          case User.name:
+            can(permission.action, User);
+            break;
+        }
+      });
     }
+    // if (role?.superAdmin) {
+    //   can(CaslAction.Manage, 'all');
+    // } else {
+    //   // can(CaslAction.Read, 'all');
+    // }
 
-    can(CaslAction.Update, Post, { userId: user.id });
-    cannot(CaslAction.Delete, Post, { status: PostStatus.PUBLISHED });
+    // can(CaslAction.Update, Post, { userId: user.id });
+    // cannot(CaslAction.Delete, Post, { status: PostStatus.PUBLISHED });
 
     return build({
       detectSubjectType: (item) =>

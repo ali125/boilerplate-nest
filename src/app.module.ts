@@ -18,6 +18,7 @@ import { TagsModule } from './tags/tags.module';
 import { CaslModule } from './casl/casl.module';
 import { PermissionsModule } from './permissions/permissions.module';
 import { RolesModule } from './roles/roles.module';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { RolesModule } from './roles/roles.module';
     CaslModule,
     PermissionsModule,
     RolesModule,
+    SeedModule,
   ],
   controllers: [AppController],
   providers: [

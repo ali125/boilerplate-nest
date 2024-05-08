@@ -4,10 +4,12 @@ import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { RefreshTokensModule } from '@/refresh-tokens/refresh-tokens.module';
 import { UsersModule } from '@/users/users.module';
+import { RolesModule } from '@/roles/roles.module';
 
 @Module({
   imports: [
     UsersModule,
+    RolesModule,
     RefreshTokensModule,
     JwtModule.register({
       global: true,

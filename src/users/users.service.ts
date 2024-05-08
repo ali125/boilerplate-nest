@@ -46,7 +46,10 @@ export class UsersService extends DataAccess<User> {
   }
 
   async findOne(id: string): Promise<User | null> {
-    const user = await this.usersRepository.findOneBy({ id });
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['role'],
+    });
     if (!user) {
       throw new NotFoundException('User Not Found!');
     }

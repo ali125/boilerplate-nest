@@ -24,12 +24,14 @@ export class UsersService extends DataAccess<User> {
 
   async create(createUserDto: CreateUserDTO): Promise<User | null> {
     const user = new User();
-    const { firstName, lastName, password, email, mobile } = createUserDto;
+    const { firstName, lastName, password, email, mobile, roleId } =
+      createUserDto;
     user.firstName = firstName;
     user.lastName = lastName;
     user.password = await bcrypt.hash(password, 10);
     user.email = email;
     if (mobile) user.mobile = mobile;
+    if (roleId) user.roleId = roleId;
 
     // check for duplicate email in the db
     const duplicate = await this.usersRepository.findOneBy({ email });
@@ -46,7 +48,10 @@ export class UsersService extends DataAccess<User> {
   }
 
   async findOne(id: string): Promise<User | null> {
-    const user = await this.usersRepository.findOneBy({ id });
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['role'],
+    });
     if (!user) {
       throw new NotFoundException('User Not Found!');
     }
@@ -91,7 +96,7 @@ export class UsersService extends DataAccess<User> {
   }
 
   async update(id: string, updateUserDto: UpdateUserDTO) {
-    const { firstName, lastName, email, mobile } = updateUserDto;
+    const { firstName, lastName, email, mobile, roleId } = updateUserDto;
 
     const user = await this.usersRepository.findOneBy({ id });
     if (!user) {
@@ -100,6 +105,7 @@ export class UsersService extends DataAccess<User> {
 
     if (firstName) user.firstName = firstName;
     if (lastName) user.lastName = lastName;
+    if (roleId) user.roleId = roleId;
     if (email && user.email !== email) {
       // check for duplicate email in the db
       const duplicate = await this.usersRepository.findOneBy({ email });
