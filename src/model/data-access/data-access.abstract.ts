@@ -85,9 +85,12 @@ export abstract class DataAccess<T> {
       ...options,
     });
 
+    const lastPage = Math.ceil(total / perPage);
+
     return {
       perPage: perPage,
       currentPage: page,
+      lastPage,
       total,
       data,
     };

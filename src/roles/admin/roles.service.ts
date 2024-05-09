@@ -35,7 +35,9 @@ export class RolesService extends DataAccess<Role> {
   }
 
   async findAll(dataAccessListDto: DataAccessListDTO) {
-    return this.baseFindAll(dataAccessListDto);
+    return this.baseFindAll(dataAccessListDto, {
+      relations: ['user'],
+    });
   }
 
   async findOne(id: string): Promise<Role | null> {

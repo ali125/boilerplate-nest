@@ -4,6 +4,7 @@ import { Post } from '@/posts/entities/post.entity';
 import { Category } from '@/categories/entities/category.entity';
 import { Tag } from '@/tags/entities/tag.entity';
 import { User } from '@/users/entities/user.entity';
+import { Role } from '@/roles/entities/role.entity';
 
 interface IPolicyHandler {
   handle(ability: AppAbility): boolean;
@@ -38,5 +39,12 @@ export class UserPolicyHandler implements IPolicyHandler {
   constructor(private action: CaslAction) {}
   handle(ability: AppAbility) {
     return ability.can(this.action, User);
+  }
+}
+
+export class RolePolicyHandler implements IPolicyHandler {
+  constructor(private action: CaslAction) {}
+  handle(ability: AppAbility) {
+    return ability.can(this.action, Role);
   }
 }

@@ -8,13 +8,18 @@ export class PermissionsController {
   constructor(private readonly permissionsService: PermissionsService) {}
 
   @Get()
-  findAll(
+  findAllQuery(
     @Query()
     dataAccessListDto: DataAccessQueryDTO,
   ) {
-    return this.permissionsService.findAll(
+    return this.permissionsService.findAllQuery(
       convertDataAccessQueryToDto(dataAccessListDto),
     );
+  }
+
+  @Get('all')
+  findAll() {
+    return this.permissionsService.findAll();
   }
 
   @Get(':id')

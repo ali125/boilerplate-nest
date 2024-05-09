@@ -12,9 +12,17 @@ import { CaslAction } from '../casl.enum';
 import { Role } from '@/roles/entities/role.entity';
 import { Category } from '@/categories/entities/category.entity';
 import { Tag } from '@/tags/entities/tag.entity';
+import { Permission } from '@/permissions/entities/permission.entity';
 
 type Subjects =
-  | InferSubjects<typeof Post | typeof Category | typeof Tag | typeof User>
+  | InferSubjects<
+      | typeof Post
+      | typeof Category
+      | typeof Tag
+      | typeof User
+      | typeof Role
+      | typeof Permission
+    >
   | 'all';
 
 export type AppAbility = Ability<[CaslAction, Subjects]>;
@@ -42,6 +50,12 @@ export class CaslAbilityFactory {
             break;
           case User.name:
             can(permission.action, User);
+            break;
+          case Role.name:
+            can(permission.action, Role);
+            break;
+          case Permission.name:
+            can(permission.action, Permission);
             break;
         }
       });

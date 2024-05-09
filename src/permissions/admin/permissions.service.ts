@@ -27,8 +27,12 @@ export class PermissionsService extends DataAccess<Permission> {
   //   return entityNames.filter((name) => !excludes.includes(name));
   // }
 
-  async findAll(dataAccessListDto: DataAccessListDTO) {
+  async findAllQuery(dataAccessListDto: DataAccessListDTO) {
     return this.baseFindAll(dataAccessListDto);
+  }
+
+  async findAll() {
+    return this.permissionsRepository.find();
   }
 
   async findAllByIds(ids: string[]): Promise<Permission[]> {
