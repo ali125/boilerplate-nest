@@ -44,7 +44,9 @@ export class UsersService extends DataAccess<User> {
   }
 
   async findAll(dataAccessListDto: DataAccessListDTO) {
-    return await this.baseFindAll(dataAccessListDto);
+    return await this.baseFindAll(dataAccessListDto, {
+      relations: ['role'],
+    });
   }
 
   async findOne(id: string): Promise<User | null> {
