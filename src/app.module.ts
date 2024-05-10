@@ -19,6 +19,7 @@ import { CaslModule } from './casl/casl.module';
 import { PermissionsModule } from './permissions/permissions.module';
 import { RolesModule } from './roles/roles.module';
 import { SeedModule } from './seed/seed.module';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { SeedModule } from './seed/seed.module';
     PermissionsModule,
     RolesModule,
     SeedModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [

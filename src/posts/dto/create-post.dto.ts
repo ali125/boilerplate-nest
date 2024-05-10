@@ -16,4 +16,6 @@ export class CreatePostDto {
   @IsEnum(PostStatus)
   @IsOptional()
   status: string;
+
+  imageUrl?: string | null;
 }

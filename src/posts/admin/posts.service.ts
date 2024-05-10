@@ -32,12 +32,13 @@ export class PostsService extends DataAccess<Post> {
     //   throw new ForbiddenException();
     // }
 
-    const { title, slug, description, status } = createPostDto;
+    const { title, slug, description, status, imageUrl } = createPostDto;
     const post = new Post();
     post.title = title;
     post.slug = await this.generateSlug({ slug, title });
     post.description = description;
     post.status = status;
+    post.imageUrl = imageUrl;
     post.userId = userId;
 
     return await this.postsRepository.manager.save(post);

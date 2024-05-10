@@ -13,6 +13,9 @@ export class Post extends BaseEntityDB {
   @Column({ length: 100 })
   slug: string;
 
+  @Column({ length: 255, nullable: true })
+  imageUrl: string | null;
+
   @Column('text', { nullable: true })
   description: string | null;
 
