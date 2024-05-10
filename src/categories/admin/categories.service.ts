@@ -22,7 +22,7 @@ export class CategoriesService extends DataAccess<Category> {
     const { title, slug, description, status, parentId } = createCategoryDto;
     const category = new Category();
     category.title = title;
-    category.slug = await this.generateSlug(slug, title);
+    category.slug = await this.generateSlug({ slug, title });
     category.description = description;
     category.status = status;
     category.userId = userId;
@@ -60,7 +60,7 @@ export class CategoriesService extends DataAccess<Category> {
     }
 
     if (title) category.title = title;
-    if (slug) category.slug = await this.generateSlug(slug);
+    if (slug) category.slug = await this.generateSlug({ slug, title, id });
     if (description) category.description = description;
     if (parentId) category.parentId = parentId;
 

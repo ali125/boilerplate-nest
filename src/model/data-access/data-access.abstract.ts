@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { isUUID } from 'class-validator';
 import slugify from 'slugify';
-import { DataAccessList } from './data-access.interface';
+import { DataAccessList, GenerateSlugParams } from './data-access.interface';
 import { DataAccessListDTO } from './data-access.dto';
 import { filterControlOperator } from '@/helper/filter';
 
@@ -96,7 +96,7 @@ export abstract class DataAccess<T> {
     };
   }
 
-  protected async generateSlug(slug?: string, title?: string) {
+  protected async generateSlug({ slug, title, id }: GenerateSlugParams) {
     // Generate slug based on title
     const baseSlug = slugify(slug || title, { lower: true });
 
@@ -108,10 +108,11 @@ export abstract class DataAccess<T> {
     while (slugExists) {
       // Check if slug already exists in the database
       // (You need to implement a function to check if a slug exists in your repository)
-      const existingPost = await this.repository.findOneBy({
+      const existed = await this.repository.findOneBy({
         slug: newSlug,
       } as FindOptionsWhere<any>);
-      if (!existingPost) {
+
+      if (!existed || (existed as any)?.id === id) {
         // If the slug does not exist, set it to the newSlug
         slugExists = false;
       } else {

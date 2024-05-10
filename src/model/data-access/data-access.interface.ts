@@ -5,3 +5,9 @@ export interface DataAccessList<T> {
   total: number;
   data: T[];
 }
+
+export type GenerateSlugParams = {
+  slug?: string;
+  title?: string;
+  id?: string;
+};

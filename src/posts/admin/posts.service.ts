@@ -35,7 +35,7 @@ export class PostsService extends DataAccess<Post> {
     const { title, slug, description, status } = createPostDto;
     const post = new Post();
     post.title = title;
-    post.slug = await this.generateSlug(slug, title);
+    post.slug = await this.generateSlug({ slug, title });
     post.description = description;
     post.status = status;
     post.userId = userId;
@@ -69,7 +69,7 @@ export class PostsService extends DataAccess<Post> {
     }
 
     if (title) post.title = title;
-    if (slug) post.slug = await this.generateSlug(slug);
+    if (slug) post.slug = await this.generateSlug({ slug, id });
     if (description) post.description = description;
 
     return await this.postsRepository.manager.save(post);

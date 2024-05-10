@@ -22,7 +22,7 @@ export class TagsService extends DataAccess<Tag> {
     const { title, slug, description, status } = createTagDto;
     const tag = new Tag();
     tag.title = title;
-    tag.slug = await this.generateSlug(slug, title);
+    tag.slug = await this.generateSlug({ slug, title });
     tag.description = description;
     tag.status = status;
     tag.userId = userId;
@@ -56,7 +56,7 @@ export class TagsService extends DataAccess<Tag> {
     }
 
     if (title) tag.title = title;
-    if (slug) tag.slug = await this.generateSlug(slug);
+    if (slug) tag.slug = await this.generateSlug({ slug, id });
     if (description) tag.description = description;
 
     return await this.tagsRepository.manager.save(tag);
