@@ -36,6 +36,7 @@ export class PermissionsService extends DataAccess<Permission> {
   }
 
   async findAllByIds(ids: string[]): Promise<Permission[]> {
+    if (ids.length === 0) return [];
     return this.permissionsRepository.find({ where: { id: In(ids) } });
   }
 

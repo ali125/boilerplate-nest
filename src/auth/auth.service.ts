@@ -11,11 +11,13 @@ import { Response } from 'express';
 import { TokensType } from './interface/token.interface';
 import { SignUpDTO } from './dto/sign-up.dto';
 import { SignInDTO } from './dto/sign-in.dto';
+import { RolesService } from '@/roles/roles.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
+    private rolesService: RolesService,
     private refreshTokenService: RefreshTokensService,
     private jwtService: JwtService,
   ) {}
@@ -206,7 +208,11 @@ export class AuthService {
     }
   }
 
-  async getProfile(id: string) {
-    return await this.usersService.findOne(id);
+  async getProfile(userId: string) {
+    return await this.usersService.findOne(userId);
+  }
+
+  async getPermissions(roleId: string | null) {
+    return await this.rolesService.findOne(roleId);
   }
 }

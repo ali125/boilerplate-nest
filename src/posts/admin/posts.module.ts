@@ -6,6 +6,7 @@ import { Post } from '../entities/post.entity';
 import { CaslModule } from '@/casl/casl.module';
 import { UsersModule } from '@/users/users.module';
 import { MulterModule } from '@nestjs/platform-express';
+import { TagsModule } from '@/tags/admin/tags.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { MulterModule } from '@nestjs/platform-express';
     TypeOrmModule.forFeature([Post]),
     CaslModule,
     UsersModule,
+    TagsModule,
   ],
   controllers: [PostsController],
   providers: [PostsService],

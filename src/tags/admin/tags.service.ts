@@ -3,7 +3,7 @@ import { CreateTagDto } from '../dto/create-tag.dto';
 import { UpdateTagDto } from '../dto/update-tag.dto';
 import { Tag } from '../entities/tag.entity';
 import { DataAccessListDTO } from '@/model/data-access/data-access.dto';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { DataAccess } from '@/model/data-access/data-access.abstract';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -34,6 +34,10 @@ export class TagsService extends DataAccess<Tag> {
     return this.baseFindAll(dataAccessListDto, {
       relations: ['user'],
     });
+  }
+
+  async findAllByIds(ids: string[]): Promise<Tag[]> {
+    return this.tagsRepository.find({ where: { id: In(ids) } });
   }
 
   async findOne(id: string): Promise<Tag | null> {

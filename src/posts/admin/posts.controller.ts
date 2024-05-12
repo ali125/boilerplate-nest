@@ -38,6 +38,7 @@ export class PostsController {
   create(
     @UploadedFile(
       new ParseFilePipe({
+        fileIsRequired: false,
         validators: [
           new MaxFileSizeValidator({
             maxSize: 3 * 1024 * 1024,
@@ -55,7 +56,7 @@ export class PostsController {
   ) {
     return this.postsService.create(userId, {
       ...createPostDto,
-      imageUrl: file.path,
+      imageUrl: file?.path,
     });
   }
 
@@ -79,13 +80,32 @@ export class PostsController {
     return this.postsService.findOne(id);
   }
 
+  @UseInterceptors(FileInterceptor('image'))
   @CheckPolicies(new PostPolicyHandler(CaslAction.Update))
   @Patch(':id')
   update(
+    @UploadedFile(
+      new ParseFilePipe({
+        fileIsRequired: false,
+        validators: [
+          new MaxFileSizeValidator({
+            maxSize: 3 * 1024 * 1024,
+            message: 'expected size is less than 3 Mb',
+          }),
+          new FileTypeValidator({
+            fileType: /(jpg|jpeg|png)$/,
+          }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePostDto: UpdatePostDto,
   ) {
-    return this.postsService.update(id, updatePostDto);
+    return this.postsService.update(id, {
+      ...updatePostDto,
+      imageUrl: file?.path,
+    });
   }
 
   @CheckPolicies(new PostPolicyHandler(CaslAction.Delete))

@@ -6,3 +6,9 @@ export const UserId = createParamDecorator(
     return request.userId;
   },
 );
+export const RoleId = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext) => {
+    const request = ctx.switchToHttp().getRequest();
+    return request?.user?.roleId || null;
+  },
+);

@@ -1,4 +1,10 @@
-import { IsString, MaxLength, IsEnum, IsOptional } from 'class-validator';
+import {
+  IsString,
+  MaxLength,
+  IsEnum,
+  IsOptional,
+  IsArray,
+} from 'class-validator';
 import { PostStatus } from '../interface/post-status.enum';
 
 export class CreatePostDto {
@@ -7,6 +13,7 @@ export class CreatePostDto {
   title: string;
 
   @IsString()
+  @IsOptional()
   description: string;
 
   @IsString()
@@ -16,6 +23,14 @@ export class CreatePostDto {
   @IsEnum(PostStatus)
   @IsOptional()
   status: string;
+
+  @IsString()
+  @IsOptional()
+  categoryId: string;
+
+  @IsArray()
+  @IsOptional()
+  tagIds: string[];
 
   imageUrl?: string | null;
 }

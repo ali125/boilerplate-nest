@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Post } from '../../posts/entities/post.entity';
 import { TagStatus } from '../interface/tag-status.enum';
@@ -21,7 +21,10 @@ export class Tag extends BaseEntityDB {
   @ManyToOne(() => User, (user) => user.tags)
   user: User;
 
-  @ManyToMany(() => Post, (post) => post.tags)
+  @ManyToMany(() => Post, (post) => post.tags, {
+    onDelete: 'CASCADE',
+  })
+  @JoinTable()
   posts: Post[];
 
   @Column({

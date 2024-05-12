@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 import { PostStatus } from '../interface/post-status.enum';
 import { User } from '../../users/entities/user.entity';
 import { Category } from '../../categories/entities/category.entity';
@@ -33,7 +33,10 @@ export class Post extends BaseEntityDB {
   @ManyToOne(() => Category, (category) => category.posts)
   category: Category;
 
-  @ManyToMany(() => Tag, (tag) => tag.posts)
+  @ManyToMany(() => Tag, (tag) => tag.posts, {
+    onDelete: 'CASCADE',
+  })
+  @JoinTable()
   tags: Tag[];
 
   @Column({ type: 'enum', enum: PostStatus, default: PostStatus.DRAFT }) // default value is Draft

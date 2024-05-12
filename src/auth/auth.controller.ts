@@ -14,7 +14,7 @@ import { SignInDTO } from './dto/sign-in.dto';
 import { Request, Response } from 'express';
 import { Public } from '@/decorators/public.decorator';
 import { SignUpDTO } from './dto/sign-up.dto';
-import { UserId } from '@/decorators/userId.decorator';
+import { RoleId, UserId } from '@/decorators/userId.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -109,5 +109,10 @@ export class AuthController {
   @Get('profile')
   async getProfile(@UserId() userId: string) {
     return await this.authService.getProfile(userId);
+  }
+
+  @Get('role')
+  async getPermissions(@RoleId() roleId: string | null) {
+    return await this.authService.getPermissions(roleId);
   }
 }
