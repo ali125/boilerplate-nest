@@ -14,6 +14,7 @@ import {
   ParseFilePipe,
   MaxFileSizeValidator,
   FileTypeValidator,
+  BadRequestException,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { DataAccessQueryDTO } from '@/model/data-access/data-access.dto';
@@ -48,6 +49,12 @@ export class PostsController {
             fileType: /(jpg|jpeg|png)$/,
           }),
         ],
+        exceptionFactory(err) {
+          return new BadRequestException({
+            property: 'image',
+            message: [err],
+          });
+        },
       }),
     )
     file: Express.Multer.File,

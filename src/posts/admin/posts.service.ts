@@ -7,6 +7,7 @@ import { Post } from '../entities/post.entity';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
 import { TagsService } from '@/tags/admin/tags.service';
+import { PostStatus } from '../interface/post-status.enum';
 
 @Injectable()
 export class PostsService extends DataAccess<Post> {
@@ -22,13 +23,20 @@ export class PostsService extends DataAccess<Post> {
     userId: string,
     createPostDto: CreatePostDto,
   ): Promise<Post | null> {
-    const { title, slug, description, status, imageUrl, categoryId, tagIds } =
-      createPostDto;
+    const {
+      title,
+      slug,
+      description,
+      isPublish,
+      imageUrl,
+      categoryId,
+      tagIds,
+    } = createPostDto;
     const post = new Post();
     post.title = title;
     post.slug = await this.generateSlug({ slug, title });
     post.description = description;
-    post.status = status;
+    post.status = isPublish ? PostStatus.PUBLISHED : PostStatus.DRAFT;
     post.userId = userId;
     post.imageUrl = imageUrl;
 
@@ -44,7 +52,7 @@ export class PostsService extends DataAccess<Post> {
 
   async findAll(dataAccessListDto: DataAccessListDTO) {
     return this.baseFindAll(dataAccessListDto, {
-      relations: ['user'],
+      relations: ['user', 'category'],
     });
   }
 
@@ -60,8 +68,15 @@ export class PostsService extends DataAccess<Post> {
   }
 
   async update(id: string, updatePostDto: UpdatePostDto): Promise<Post | null> {
-    const { title, slug, description, imageUrl, categoryId, tagIds } =
-      updatePostDto;
+    const {
+      title,
+      slug,
+      description,
+      imageUrl,
+      categoryId,
+      isPublish,
+      tagIds,
+    } = updatePostDto;
 
     const post = await this.postsRepository.findOneBy({ id });
     if (!post) {
@@ -72,6 +87,7 @@ export class PostsService extends DataAccess<Post> {
     if (slug) post.slug = await this.generateSlug({ slug, id });
     if (description) post.description = description;
     if (imageUrl) post.imageUrl = imageUrl;
+    post.status = isPublish ? PostStatus.PUBLISHED : PostStatus.DRAFT;
 
     if (categoryId) post.categoryId = categoryId;
 

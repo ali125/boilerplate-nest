@@ -1,14 +1,15 @@
 import {
   IsString,
   MaxLength,
-  IsEnum,
   IsOptional,
   IsArray,
+  IsBooleanString,
+  MinLength,
 } from 'class-validator';
-import { PostStatus } from '../interface/post-status.enum';
 
 export class CreatePostDto {
-  @MaxLength(100)
+  @MaxLength(50)
+  @MinLength(5)
   @IsString()
   title: string;
 
@@ -20,9 +21,12 @@ export class CreatePostDto {
   @IsOptional()
   slug: string;
 
-  @IsEnum(PostStatus)
+  // @IsEnum(PostStatus)
+  // @IsOptional()
+  // status: string;
+  @IsBooleanString()
   @IsOptional()
-  status: string;
+  isPublish: boolean = false;
 
   @IsString()
   @IsOptional()

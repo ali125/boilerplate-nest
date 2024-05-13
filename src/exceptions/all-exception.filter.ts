@@ -17,13 +17,17 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus();
 
     const message = exception.message; // Accessing the message property of the exception
-    const exceptionResponseMessage = (exception.getResponse() as any)?.message;
+    const exceptionResponse = exception.getResponse() as any;
+    const exceptionResponseMessage = exceptionResponse?.message;
+    const property = exceptionResponse?.property;
+
     if (
       exception instanceof HttpException &&
       exceptionResponseMessage instanceof Array
     ) {
       const validationErrors = exceptionResponseMessage as ValidationError[];
 
+      console.log('validationErrors', validationErrors);
       // Check if it's an instance of class-validation ValidationError
       if (validationErrors.every((error) => error instanceof ValidationError)) {
         // Do something specific for class-validation errors
@@ -39,6 +43,15 @@ export class HttpExceptionFilter implements ExceptionFilter {
             }),
             {},
           ),
+        });
+        return;
+      } else if (property) {
+        response.status(HttpStatus.BAD_REQUEST).json({
+          statusCode: HttpStatus.BAD_REQUEST,
+          timestamp: new Date().toISOString(),
+          path: request.url,
+          message: 'Validation failed', // Custom message for validation errors
+          errors: { [property]: exceptionResponseMessage },
         });
         return;
       }
