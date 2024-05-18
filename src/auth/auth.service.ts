@@ -12,6 +12,7 @@ import { TokensType } from './interface/token.interface';
 import { SignUpDTO } from './dto/sign-up.dto';
 import { SignInDTO } from './dto/sign-in.dto';
 import { RolesService } from '@/roles/roles.service';
+import { ProfileDTO } from './dto/profile.dto';
 
 @Injectable()
 export class AuthService {
@@ -210,6 +211,10 @@ export class AuthService {
 
   async getProfile(userId: string) {
     return await this.usersService.findOne(userId);
+  }
+
+  async updateProfile(userId: string, profileDto: ProfileDTO) {
+    return await this.usersService.update(userId, profileDto);
   }
 
   async getPermissions(roleId: string | null) {
