@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -12,6 +13,7 @@ import * as bcrypt from 'bcrypt';
 import { UserStatus } from './interfaces/user-status.enum';
 import { DataAccess } from '@/model/data-access/data-access.abstract';
 import { DataAccessListDTO } from '@/model/data-access/data-access.dto';
+import { ChangePassowrdDTO } from '@/auth/dto/changePassword.dto';
 
 @Injectable()
 export class UsersService extends DataAccess<User> {
@@ -122,6 +124,33 @@ export class UsersService extends DataAccess<User> {
     if (mobile) user.mobile = mobile;
 
     return await this.usersRepository.manager.save(user);
+  }
+
+  async updatePassowrd(id: string, changePasswordDto: ChangePassowrdDTO) {
+    const { currentPassword, newPassword } = changePasswordDto;
+
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      select: ['id', 'password'],
+    });
+    if (!user) {
+      throw new NotFoundException('User Not Found!');
+    }
+
+    // evaluate password
+    const match = await bcrypt.compare(currentPassword, user.password);
+    if (!match) {
+      throw new BadRequestException({
+        property: 'currentPassword',
+        message: ["current password doesn't match"],
+      });
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+
+    await this.usersRepository.manager.save(user);
+
+    return { message: 'password changed successfully' };
   }
 
   async remove(id: string): Promise<void> {

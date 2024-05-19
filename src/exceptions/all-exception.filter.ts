@@ -27,7 +27,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
     ) {
       const validationErrors = exceptionResponseMessage as ValidationError[];
 
-      console.log('validationErrors', validationErrors);
       // Check if it's an instance of class-validation ValidationError
       if (validationErrors.every((error) => error instanceof ValidationError)) {
         // Do something specific for class-validation errors

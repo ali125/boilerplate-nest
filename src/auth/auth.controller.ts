@@ -23,6 +23,7 @@ import { SignUpDTO } from './dto/sign-up.dto';
 import { RoleId, UserId } from '@/decorators/userId.decorator';
 import { ProfileDTO } from './dto/profile.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ChangePassowrdDTO } from './dto/changePassword.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -150,6 +151,14 @@ export class AuthController {
       ...profileDto,
       avatar: file?.path,
     });
+  }
+
+  @Post('changePassword')
+  async updatePassword(
+    @UserId() userId: string,
+    @Body() changePasswordDto: ChangePassowrdDTO,
+  ) {
+    return await this.authService.updatePasssword(userId, changePasswordDto);
   }
 
   @Get('role')

@@ -13,6 +13,7 @@ import { SignUpDTO } from './dto/sign-up.dto';
 import { SignInDTO } from './dto/sign-in.dto';
 import { RolesService } from '@/roles/roles.service';
 import { ProfileDTO } from './dto/profile.dto';
+import { ChangePassowrdDTO } from './dto/changePassword.dto';
 
 @Injectable()
 export class AuthService {
@@ -215,6 +216,10 @@ export class AuthService {
 
   async updateProfile(userId: string, profileDto: ProfileDTO) {
     return await this.usersService.update(userId, profileDto);
+  }
+
+  async updatePasssword(userId: string, changePasswordDto: ChangePassowrdDTO) {
+    return await this.usersService.updatePassowrd(userId, changePasswordDto);
   }
 
   async getPermissions(roleId: string | null) {
