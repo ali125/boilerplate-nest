@@ -1,12 +1,13 @@
-import { RefreshTokensService } from '@/refresh-tokens/refresh-tokens.service';
-import { UsersService } from '@/users/users.service';
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { RefreshTokensService } from '@/refresh-tokens/refresh-tokens.service';
+import { UsersService } from '@/users/users.service';
 import { Response } from 'express';
 import { TokensType } from './interface/token.interface';
 import { SignUpDTO } from './dto/sign-up.dto';
@@ -14,6 +15,8 @@ import { SignInDTO } from './dto/sign-in.dto';
 import { RolesService } from '@/roles/roles.service';
 import { ProfileDTO } from './dto/profile.dto';
 import { ChangePassowrdDTO } from './dto/changePassword.dto';
+import { ForgotDTO } from './dto/forgot.dto';
+import { ResetPassowrdDTO } from './dto/resetPassword.dto';
 
 @Injectable()
 export class AuthService {
@@ -55,7 +58,7 @@ export class AuthService {
     // evaluate password
     const match = await bcrypt.compare(signInDto.password, userAuth.password);
     if (!match) {
-      throw new UnauthorizedException();
+      throw new BadRequestException();
     }
 
     const { accessToken, refreshToken: newRefreshToken } =
@@ -96,6 +99,26 @@ export class AuthService {
       accessToken,
       refreshToken: newRefreshToken,
     };
+  }
+
+  async forgot(forgot: ForgotDTO): Promise<{ message: string }> {
+    await this.usersService.updateForgotToken(forgot.email);
+    return { message: 'code has been sent' };
+  }
+
+  async resetPassword(
+    resetPasswordDto: ResetPassowrdDTO,
+  ): Promise<{ message: string }> {
+    const { token, newPassword } = resetPasswordDto;
+    try {
+      return await this.usersService.resetPassowrd(token, newPassword);
+    } catch (e) {
+      console.log('catch error', e);
+      throw new BadRequestException({
+        property: 'token',
+        message: ['token is invalid'],
+      });
+    }
   }
 
   async signUp(

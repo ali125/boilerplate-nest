@@ -24,6 +24,8 @@ import { RoleId, UserId } from '@/decorators/userId.decorator';
 import { ProfileDTO } from './dto/profile.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ChangePassowrdDTO } from './dto/changePassword.dto';
+import { ForgotDTO } from './dto/forgot.dto';
+import { ResetPassowrdDTO } from './dto/resetPassword.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -113,6 +115,20 @@ export class AuthController {
     });
 
     return { accessToken };
+  }
+
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Post('forgot')
+  async forgot(@Body() forgotDto: ForgotDTO) {
+    return this.authService.forgot(forgotDto);
+  }
+
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Post('resetPassword')
+  async resetPassword(@Body() resetPasswordDto: ResetPassowrdDTO) {
+    return this.authService.resetPassword(resetPasswordDto);
   }
 
   @Get('profile')

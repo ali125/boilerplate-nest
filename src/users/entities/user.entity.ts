@@ -41,6 +41,14 @@ export class User extends BaseEntityDB {
   @Column({ type: 'enum', enum: UserStatus, default: UserStatus.ACTIVE })
   status: string;
 
+  @Column({ length: 200, nullable: true })
+  resetToken: string | null;
+  @Column({
+    type: 'timestamp',
+    nullable: true,
+  })
+  resetTokenExpires: Date | null;
+
   @Column({ nullable: true })
   roleId: string | null;
 

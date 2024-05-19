@@ -4,16 +4,18 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import * as crypto from 'crypto';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UserStatus } from './interfaces/user-status.enum';
 import { DataAccess } from '@/model/data-access/data-access.abstract';
 import { DataAccessListDTO } from '@/model/data-access/data-access.dto';
 import { ChangePassowrdDTO } from '@/auth/dto/changePassword.dto';
+import { addHours } from 'date-fns';
 
 @Injectable()
 export class UsersService extends DataAccess<User> {
@@ -70,7 +72,8 @@ export class UsersService extends DataAccess<User> {
       select: ['id', 'email', 'password'],
     });
     if (!user) {
-      throw new NotFoundException('User Not Found!');
+      // throw new NotFoundException('User Not Found!');
+      throw new BadRequestException();
     }
     return user;
   }
@@ -124,6 +127,40 @@ export class UsersService extends DataAccess<User> {
     if (mobile) user.mobile = mobile;
 
     return await this.usersRepository.manager.save(user);
+  }
+
+  async updateForgotToken(email: string) {
+    const user = await this.usersRepository.findOneBy({ email });
+    if (!user) {
+      throw new NotFoundException('User Not Found!');
+    }
+    const expires = addHours(new Date(), 1); // token valid for 1 hour
+    const resetToken = crypto.randomBytes(32).toString('hex');
+
+    console.log({ resetToken });
+
+    user.resetToken = resetToken;
+    user.resetTokenExpires = expires;
+
+    return await this.usersRepository.manager.save(user);
+  }
+
+  async resetPassowrd(resetToken: string, newPassword: string) {
+    const user = await this.usersRepository.findOneBy({
+      resetToken,
+      resetTokenExpires: MoreThan(new Date()),
+    });
+    if (!user) {
+      throw new NotFoundException('User Not Found!');
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    user.resetToken = null;
+    user.resetTokenExpires = null;
+
+    await this.usersRepository.manager.save(user);
+
+    return { message: 'password changed successfully' };
   }
 
   async updatePassowrd(id: string, changePasswordDto: ChangePassowrdDTO) {
