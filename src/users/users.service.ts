@@ -24,12 +24,8 @@ export class UsersService extends DataAccess<User> {
 
   async create(createUserDto: CreateUserDTO): Promise<User | null> {
     const user = new User();
-    const { firstName, lastName, password, email, mobile } = createUserDto;
-    user.firstName = firstName;
-    user.lastName = lastName;
-    user.password = await bcrypt.hash(password, 10);
-    user.email = email;
-    if (mobile) user.mobile = mobile;
+    const { firstName, lastName, password, email, mobile, avatar, about } =
+      createUserDto;
 
     // check for duplicate email in the db
     const duplicate = await this.usersRepository.findOneBy({ email });
@@ -37,6 +33,14 @@ export class UsersService extends DataAccess<User> {
       // 409 Conflict
       throw new ConflictException('This Email is already exists.');
     }
+
+    user.firstName = firstName;
+    user.lastName = lastName;
+    user.password = await bcrypt.hash(password, 10);
+    user.email = email;
+    user.about = about;
+    if (mobile) user.mobile = mobile;
+    if (avatar) user.avatarUrl = avatar;
 
     return await this.usersRepository.manager.save(user);
   }
@@ -94,15 +98,13 @@ export class UsersService extends DataAccess<User> {
   }
 
   async update(id: string, updateUserDto: UpdateUserDTO) {
-    const { firstName, lastName, email, mobile } = updateUserDto;
+    const { firstName, lastName, email, mobile, avatar, about } = updateUserDto;
 
     const user = await this.usersRepository.findOneBy({ id });
     if (!user) {
       throw new NotFoundException('User Not Found!');
     }
 
-    if (firstName) user.firstName = firstName;
-    if (lastName) user.lastName = lastName;
     if (email && user.email !== email) {
       // check for duplicate email in the db
       const duplicate = await this.usersRepository.findOneBy({ email });
@@ -112,6 +114,11 @@ export class UsersService extends DataAccess<User> {
       }
       user.email = email;
     }
+
+    if (firstName) user.firstName = firstName;
+    if (lastName) user.lastName = lastName;
+    if (avatar) user.avatarUrl = avatar;
+    if (about) user.about = about;
     if (mobile) user.mobile = mobile;
 
     return await this.usersRepository.manager.save(user);

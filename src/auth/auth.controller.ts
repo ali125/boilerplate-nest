@@ -1,13 +1,19 @@
 import {
+  BadRequestException,
   Body,
   Controller,
+  FileTypeValidator,
   Get,
   HttpCode,
   HttpStatus,
   Ip,
+  MaxFileSizeValidator,
+  ParseFilePipe,
   Post,
   Req,
   Res,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDTO } from './dto/sign-in.dto';
@@ -16,6 +22,7 @@ import { Public } from '@/decorators/public.decorator';
 import { SignUpDTO } from './dto/sign-up.dto';
 import { RoleId, UserId } from '@/decorators/userId.decorator';
 import { ProfileDTO } from './dto/profile.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('auth')
 export class AuthController {
@@ -112,12 +119,37 @@ export class AuthController {
     return await this.authService.getProfile(userId);
   }
 
+  @UseInterceptors(FileInterceptor('avatar'))
   @Post('profile')
   async updateProfile(
+    @UploadedFile(
+      new ParseFilePipe({
+        fileIsRequired: false,
+        validators: [
+          new MaxFileSizeValidator({
+            maxSize: 3 * 1024 * 1024,
+            message: 'expected size is less than 3 Mb',
+          }),
+          new FileTypeValidator({
+            fileType: /(jpg|jpeg|png)$/,
+          }),
+        ],
+        exceptionFactory(err) {
+          return new BadRequestException({
+            property: 'avatar',
+            message: [err],
+          });
+        },
+      }),
+    )
+    file: Express.Multer.File,
     @UserId() userId: string,
     @Body() profileDto: ProfileDTO,
   ) {
-    return await this.authService.updateProfile(userId, profileDto);
+    return await this.authService.updateProfile(userId, {
+      ...profileDto,
+      avatar: file?.path,
+    });
   }
 
   @Get('role')

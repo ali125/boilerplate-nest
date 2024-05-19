@@ -3,9 +3,15 @@ import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [
+    MulterModule.register({
+      dest: './upload/users',
+    }),
+    TypeOrmModule.forFeature([User]),
+  ],
   exports: [UsersService],
   controllers: [UsersController],
   providers: [UsersService],

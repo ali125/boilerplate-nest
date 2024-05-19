@@ -63,7 +63,7 @@ export class PostsController {
   ) {
     return this.postsService.create(userId, {
       ...createPostDto,
-      imageUrl: file?.path,
+      image: file?.path,
     });
   }
 
@@ -111,7 +111,7 @@ export class PostsController {
   ) {
     return this.postsService.update(id, {
       ...updatePostDto,
-      imageUrl: file?.path,
+      image: file?.path,
     });
   }
 

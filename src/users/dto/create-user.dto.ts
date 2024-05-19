@@ -20,4 +20,10 @@ export class CreateUserDTO {
   @IsString()
   @IsOptional()
   roleId?: string;
+
+  @IsString()
+  @IsOptional()
+  about?: string;
+
+  avatar?: string | null;
 }

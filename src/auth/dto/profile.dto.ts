@@ -16,4 +16,10 @@ export class ProfileDTO {
   @IsEmail()
   @IsOptional()
   email: string;
+
+  @IsString()
+  @IsOptional()
+  about: string;
+
+  avatar?: string | null;
 }

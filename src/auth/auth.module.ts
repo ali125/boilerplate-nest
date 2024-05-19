@@ -5,12 +5,16 @@ import { JwtModule } from '@nestjs/jwt';
 import { RefreshTokensModule } from '@/refresh-tokens/refresh-tokens.module';
 import { UsersModule } from '@/users/users.module';
 import { RolesModule } from '@/roles/roles.module';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
     UsersModule,
     RolesModule,
     RefreshTokensModule,
+    MulterModule.register({
+      dest: './upload/users',
+    }),
     JwtModule.register({
       global: true,
       secret: process.env.ACCESS_TOKEN_SECRET,

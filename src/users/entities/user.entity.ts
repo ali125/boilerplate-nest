@@ -32,6 +32,12 @@ export class User extends BaseEntityDB {
   })
   password: string;
 
+  @Column({ length: 255, nullable: true })
+  avatarUrl: string | null;
+
+  @Column('text', { nullable: true })
+  about: string | null;
+
   @Column({ type: 'enum', enum: UserStatus, default: UserStatus.ACTIVE })
   status: string;
 

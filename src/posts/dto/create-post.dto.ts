@@ -36,5 +36,5 @@ export class CreatePostDto {
   @IsOptional()
   tagIds: string[];
 
-  imageUrl?: string | null;
+  image?: string | null;
 }
